@@ -76,8 +76,8 @@ def all_dataset_wrapper(frames, args, features_to_scale, model):
             min_max_scale(test_data, features_to_scale)
         elif(args['type_scale']=='standardization'):
             standardizaton(train_data, features_to_scale)
-            standardizaton(train_data, features_to_scale)
-            standardizaton(train_data, features_to_scale)
+            standardizaton(val_data, features_to_scale)
+            standardizaton(test_data, features_to_scale)
         
         train.append(train_data)
         val.append(val_data)
@@ -204,17 +204,17 @@ def wrapper(data_frame,model,target_column,features_to_scale, args):
             min_max_scale(test_data, features_to_scale)
         elif(args['type_scale']=='standardization'):
             standardizaton(train_data, features_to_scale)
-            standardizaton(train_data, features_to_scale)
-            standardizaton(train_data, features_to_scale)
+            standardizaton(val_data, features_to_scale)
+            standardizaton(test_data, features_to_scale)
             
             
-    train_ds=WindowGenerator(input_width=args['input_width'],label_width=args['label_width'],shift=args['shift'],df=train_data,label_columns=[target_column])
-    val_ds=WindowGenerator(input_width=args['input_width'],label_width=args['label_width'],shift=args['shift'],df=val_data,label_columns=[target_column])
-    test_ds=WindowGenerator(input_width=args['input_width'],label_width=args['label_width'],shift=args['shift'],df=test_data,label_columns=[target_column])
+    train_ds=WindowGenerator(input_width=args['window_size'],label_width=args['n_horizon'],shift=args['shift'],df=train_data,label_columns=[target_column])
+    val_ds=WindowGenerator(input_width=args['window_size'],label_width=args['n_horizon'],shift=args['shift'],df=val_data,label_columns=[target_column])
+    test_ds=WindowGenerator(input_width=args['window_size'],label_width=args['n_horizon'],shift=args['shift'],df=test_data,label_columns=[target_column])
     
     model.compile(loss=args['loss'], optimizer=args['optimizer'], metrics=[args['metric']])
     model_history = model.fit(train_ds.data, validation_data=val_ds.data, epochs=args['epochs'], verbose=1)
-    return model_history, model, test_ds
+    return model_history, model, test_ds.data
 
 '''
 def all_ds_wrapper(dataframes, model, args):

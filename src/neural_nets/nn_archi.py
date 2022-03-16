@@ -54,6 +54,18 @@ residual_lstm = ResidualWrapper(
     tf.keras.layers.LSTM(32, return_sequences=True),
     tf.keras.layers.Dense(1,kernel_initializer=tf.initializers.zeros())]))
 
+def conv_lstm_model(window_size,n_features,n_horizon):
+    CONV_WIDTH=3
+    inputs = tf.keras.layers.Input(shape=(window_size, n_features), name='main')
+    layer_1 =tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :])(inputs)
+    cnv_layer = tf.keras.layers.Conv1D(96, activation='relu', kernel_size=(CONV_WIDTH))(layer_1)
+    lstm_1 = tf.keras.layers.LSTM(60, return_sequences=True)(cnv_layer)
+    drop_1 = tf.keras.layers.Dropout(0.3)(lstm_1)
+    lstm_2 = tf.keras.layers.LSTM(60, return_sequences=True)(drop_1)
+    dense_1 = tf.keras.layers.Dense(128, activation='relu')(lstm_2)
+    outputs = tf.keras.layers.Dense(n_horizon)(dense_1)
+    conv_lstm_model = tf.keras.Model(inputs=inputs, outputs=outputs, name='conv_lstm_model')
+    return conv_lstm_model
 
 def cnn_lstm_skip(window_size,n_features,n_horizon):
 
