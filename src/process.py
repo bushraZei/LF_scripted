@@ -34,11 +34,11 @@ def correct_frequency(dataframe):
 
 
 
-def ks_imputation(dataframe):
+def ks_imputation(dataframe, column_to_impute):
     data_smoothed = dataframe.copy()
-    wert_column =  "Wert (kW)" if "Wert (kW)" in data_smoothed.columns else "Wert"
+    #wert_column =  "Wert (kW)" if "Wert (kW)" in data_smoothed.columns else "Wert"
     smoother = KalmanSmoother(component='level_longseason', component_noise={'level':10**-0.5, 'longseason':10**-0.5}, n_longseasons=24*4)
-    smoother.smooth(data_smoothed[wert_column])
+    smoother.smooth(data_smoothed[column_to_impute])
     
     old_val = pd.Series(smoother.data[0], index=data_smoothed.index)
     new_val = pd.Series(smoother.smooth_data[0], index=data_smoothed.index)

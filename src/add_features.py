@@ -61,7 +61,7 @@ def add_weather_features(start_date_time,end_date_time, latitude, longitude):
     return df
   except Exception as r:
     raise Exception("Error {} reading from {}".format(r, weather_api_endpoint+query_params))
-  return 
+  return
 
 
 def time_of_day(x):
@@ -94,10 +94,8 @@ def return_holiday_name(date):
 def add_calendar_features(dataframe):
   dataframe.index = dataframe.index.astype('datetime64[ns]')
   data = dataframe.copy()
-  print(type(data.index))
   weekdays = {0:'Monday', 1:'Tuesday', 2:'Wednesday', 3: 'Thursday', 4: 'Friday', 5:'Saturday', 6:'Sunday'}
   data['year'] = data.index.year
-  print(type(data.index))
   data['month'] = data.index.month
   data['day'] = data.index.day
   data['hour'] = data.index.hour
