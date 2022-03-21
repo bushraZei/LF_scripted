@@ -1,5 +1,6 @@
 from json import load
 import os
+from add_features import add_features
 from read_data import read_data
 from process import correct_frequency, ks_imputation
 import pandas as pd
@@ -10,7 +11,7 @@ import tensorflow as tf
 from os import walk
 import matplotlib.pyplot as plt
 import variables
-
+import add_features
 
 file_path = variables.one_file_path
 file_dir = variables.file_dir
@@ -28,7 +29,7 @@ argss = {'epochs': 1,'loss':tf.keras.losses.Huber(),'optimizer':tf.keras.optimiz
 one_file = True
 
 if __name__ == "__main__":
- 
+   
    if(one_file == True):
       data = read_data(file_path, 'Zeitstempel',multiple_sheets=True)
       #data = correct_frequency(data)
@@ -70,3 +71,4 @@ if __name__ == "__main__":
    model_weights_dir = '../model_weights/1_horizons/one_day_lookback/'+model.name
    os.makedirs(model_weights_dir, exist_ok=False)
    model.save(model_weights_dir)
+

@@ -9,12 +9,15 @@ import matplotlib.pyplot as plt
 from read_data import read_data
 from neural_nets.functions import window_dataset
 from process import min_max_scale
-import args
+import argparse
+import read_data
 import pandas as pd
-
+import add_features
 
 print(tf.__version__)
 
-
-def prrdict(model, data, target_column):
-       return model.predict(data)
+if __name__=='__main__':
+       ## recieve a file
+       ## append features
+       ## call the trained model
+       pass
