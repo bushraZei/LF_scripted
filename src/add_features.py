@@ -33,7 +33,6 @@ def add_weather_features(start_date_time,end_date_time, latitude, longitude):
 
   column_names = ['datetimeStr','temp','dew','humidity','precip','snow','wdir','wspd','wgust','lpressure','sonnendauer']
   df= pd.DataFrame(columns = column_names)
-
   query_params=query_params.format(elements, api_key, start_date_time.isoformat(), end_date_time.isoformat(), latitude, longitude)
 
   try: 

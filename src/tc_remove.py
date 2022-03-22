@@ -12,7 +12,7 @@ def trend_removal(data, rolling, column_name):
     
     data: time series
     rolling : the moving average window
-    
+
     returns a trend removed time series
     """
     #wert_column = "Wert (kW)" if "Wert (kW)" in data.columns else "Wert"
