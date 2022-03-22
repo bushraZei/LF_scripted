@@ -17,4 +17,9 @@ import add_features
 print(tf.__version__)
 
 if __name__=='__main__':
+       ## recieve a file
+       
+       ## append features
+
+       ## call the trained model
        pass

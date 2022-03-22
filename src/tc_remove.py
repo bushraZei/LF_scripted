@@ -2,8 +2,10 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 import numpy as np
+import argparse
+import read_data
 
-def trend_removal(data, rolling):
+def trend_removal(data, rolling, column_name):
     """
     Function that takes a time series and removes the trend by using a moving average.
     rolling should be chosen to remove long term trends, but keep the daily and monthly seasonalites
@@ -13,16 +15,16 @@ def trend_removal(data, rolling):
     
     returns a trend removed time series
     """
-    wert_column = "Wert (kW)" if "Wert (kW)" in data.columns else "Wert"
+    #wert_column = "Wert (kW)" if "Wert (kW)" in data.columns else "Wert"
     df= data.copy()
     #first: trend smoothing using moving average
-    df['mov_avg'] = df[wert_column].rolling(window=rolling).mean()
-    df.mov_avg.fillna(df[wert_column], inplace=True)
+    df['mov_avg'] = df[column_name].rolling(window=rolling).mean()
+    df.mov_avg.fillna(df[column_name], inplace=True)
     
     #second : trend removal using the trend factor
-    tsv = df[wert_column][-1] # a reference value, eg, the last value
+    tsv = df[column_name][-1] # a reference value, eg, the last value
     df['tfi'] = df['mov_avg'] / tsv
-    df['wert_trend_rm'] = df[wert_column] - df['tfi']
+    df['wert_trend_rm'] = df[column_name] - df['tfi']
     return df
 
 
@@ -90,7 +92,7 @@ def seasonal_indexes(series, seasonality):
     return 
 
 
-def seasonality_removal(data, seasonality):
+def seasonality_removal(data, seasonality,column_name):
     """
     Function that takes a time series data and removes seasonality.
     
@@ -99,9 +101,9 @@ def seasonality_removal(data, seasonality):
     
     returns 
     """
-    wert_column = "wert_trend_rm"
+    #wert_column = "wert_trend_rm"
     df = data.copy()
-    series = df[wert_column]
+    series = df[column_name]
     first_index = series.index[0]
     last_index = series.index[-1]
     dw = seasonal_indexes(series, seasonality) ## 96 length for daily and 2976 for monthly
@@ -125,3 +127,15 @@ def seasonality_removal(data, seasonality):
     frames['wert_seasonality_rm'] = frames['load'] - frames ['seasonal_index'] # the ts model is additive
     frames.drop(['load'], axis=1, inplace=True)
     return pd.concat([df, frames], axis=1)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Arguments get parsed via --commands')
+    parser.add_argument("-i", metavar='input file', required=True,help='an input dataset in .excel or .csv file')
+    parser.add_argument("-c", metavar='column name', required=True,help='the name of the column that needs trend or/and seasonality removal')
+    parser.add_argument("-t", metavar='type of precessing', required=True,help='t for trend, s for seasonalitym ts for both')
+    args = parser.parse_args()
+    data = read_data.read_data(args.i, 'Zeitstempel', multiple_sheets=True)
+    trend_removal(data, 4*24, args.c)
+    ts = seasonality_removal(data, 'daily','wert_trend_rm')
+    print(ts.head())
