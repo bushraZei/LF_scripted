@@ -212,6 +212,10 @@ def wrapper(data_frame,model,target_column,features_to_scale, args):
     val_ds=WindowGenerator(input_width=args['window_size'],label_width=args['n_horizon'],shift=args['shift'],df=val_data,label_columns=[target_column])
     test_ds=WindowGenerator(input_width=args['window_size'],label_width=args['n_horizon'],shift=args['shift'],df=test_data,label_columns=[target_column])
     
+    #train_ds = window_dataset(train_data, args['window_size'], args['n_horizon'], args['batch_size'], args['shuffle_buffer_size'], multi_var=args['multi_var'])
+    #val_ds = window_dataset(val_data, args['window_size'], args['n_horizon'], args['batch_size'], args['shuffle_buffer_size'], multi_var=args['multi_var'])
+    #test_ds = window_dataset(test_data, args['window_size'], args['n_horizon'], args['batch_size'], args['shuffle_buffer_size'], multi_var=args['multi_var'])
+
     model.compile(loss=args['loss'], optimizer=args['optimizer'], metrics=[args['metric']])
     model_history = model.fit(train_ds.data, validation_data=val_ds.data, epochs=args['epochs'], verbose=1)
     return model_history, model, test_ds.data
